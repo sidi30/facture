@@ -1,0 +1,241 @@
+<div class="container">
+  <header>
+    <h1>{{ title }}</h1>
+    <p class="subtitle">Créez et générez vos factures professionnelles en PDF</p>
+  </header>
+
+  <div class="layout">
+    <!-- Formulaire -->
+    <section class="form-section">
+      <div class="card">
+        <h2>📋 Informations de la facture</h2>
+
+        <!-- Émetteur -->
+        <fieldset>
+          <legend>Émetteur</legend>
+          <div class="form-group">
+            <label>Nom / Raison sociale *</label>
+            <input type="text" [value]="form().seller_name" (input)="updateForm('seller_name', $any($event.target).value)">
+          </div>
+          <div class="form-group">
+            <label>Statut juridique</label>
+            <input type="text" [value]="form().seller_status" (input)="updateForm('seller_status', $any($event.target).value)">
+          </div>
+          <div class="form-group">
+            <label>Adresse complète *</label>
+            <textarea rows="3" [value]="form().seller_addr" (input)="updateForm('seller_addr', $any($event.target).value)"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email *</label>
+              <input type="email" [value]="form().seller_email" (input)="updateForm('seller_email', $any($event.target).value)">
+            </div>
+            <div class="form-group">
+              <label>Téléphone</label>
+              <input type="tel" [value]="form().seller_phone" (input)="updateForm('seller_phone', $any($event.target).value)">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>SIREN</label>
+              <input type="text" [value]="form().seller_siren" (input)="updateForm('seller_siren', $any($event.target).value)">
+            </div>
+            <div class="form-group">
+              <label>IBAN</label>
+              <input type="text" [value]="form().seller_iban" (input)="updateForm('seller_iban', $any($event.target).value)">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>BIC</label>
+            <input type="text" [value]="form().seller_bic" (input)="updateForm('seller_bic', $any($event.target).value)">
+          </div>
+        </fieldset>
+
+        <!-- Client -->
+        <fieldset>
+          <legend>Client</legend>
+          <div class="form-group">
+            <label>Presets clients</label>
+            <div class="button-group">
+              <button type="button" (click)="loadSynantoPreset()">🏢 Synanto</button>
+              <button type="button" (click)="loadNewClientPreset()">➕ Nouveau client</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Nom / Raison sociale *</label>
+            <input type="text" [value]="form().client_name" (input)="updateForm('client_name', $any($event.target).value)">
+          </div>
+          <div class="form-group">
+            <label>Adresse complète *</label>
+            <textarea rows="3" [value]="form().client_addr" (input)="updateForm('client_addr', $any($event.target).value)"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" [value]="form().client_email" (input)="updateForm('client_email', $any($event.target).value)">
+            </div>
+            <div class="form-group">
+              <label>Téléphone</label>
+              <input type="tel" [value]="form().client_phone" (input)="updateForm('client_phone', $any($event.target).value)">
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Détails facture -->
+        <fieldset>
+          <legend>Détails de la facture</legend>
+          <div class="form-row">
+            <div class="form-group">
+              <label>N° Facture *</label>
+              <input type="text" [value]="form().inv_no" (input)="updateForm('inv_no', $any($event.target).value)">
+            </div>
+            <div class="form-group">
+              <label>Date de facture *</label>
+              <input type="date" [value]="form().inv_date" (input)="updateForm('inv_date', $any($event.target).value)">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Échéance (jours)</label>
+            <input type="number" min="0" [value]="form().due_days" (input)="updateForm('due_days', +$any($event.target).value)">
+            <small>Date d'échéance : {{ dateHuman(totals().dueDate) }}</small>
+          </div>
+        </fieldset>
+
+        <!-- Prestation -->
+        <fieldset>
+          <legend>Prestation</legend>
+          <div class="form-group">
+            <label>Description *</label>
+            <textarea rows="2" [value]="form().item_desc" (input)="updateForm('item_desc', $any($event.target).value)"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Quantité (jours) *</label>
+              <input type="number" min="0" step="0.5" [value]="form().days" (input)="updateForm('days', +$any($event.target).value)">
+            </div>
+            <div class="form-group">
+              <label>TJM (€) *</label>
+              <input type="number" min="0" [value]="form().tjm" (input)="updateForm('tjm', +$any($event.target).value)">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Remise (€)</label>
+            <input type="number" min="0" [value]="form().discount" (input)="updateForm('discount', +$any($event.target).value)">
+          </div>
+        </fieldset>
+
+        <!-- TVA -->
+        <fieldset>
+          <legend>TVA</legend>
+          <div class="form-group">
+            <label>Mode de TVA</label>
+            <select [value]="form().vat_mode" (change)="updateForm('vat_mode', $any($event.target).value)">
+              <option value="franchise">Franchise en base (art. 293 B)</option>
+              <option value="tva20">TVA 20%</option>
+              <option value="tva10">TVA 10%</option>
+              <option value="tva5_5">TVA 5,5%</option>
+            </select>
+          </div>
+        </fieldset>
+
+        <!-- Boutons d'action -->
+        <div class="actions">
+          <button type="button" class="btn-primary" (click)="exportPDF()">📄 Générer PDF</button>
+          <button type="button" class="btn-secondary" (click)="printInvoice()">🖨️ Imprimer</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Aperçu facture -->
+    <section class="preview-section">
+      <div class="card">
+        <h2>👁️ Aperçu</h2>
+        <div id="invoice" class="invoice">
+          <!-- En-tête -->
+          <div class="invoice-header">
+            <div class="invoice-title">
+              <h1>FACTURE</h1>
+              <p class="invoice-number">{{ form().inv_no }}</p>
+            </div>
+          </div>
+
+          <!-- Parties -->
+          <div class="invoice-parties">
+            <div class="party">
+              <h3>Émetteur</h3>
+              <p><strong>{{ form().seller_name }}</strong></p>
+              <p *ngIf="form().seller_status">{{ form().seller_status }}</p>
+              <p style="white-space: pre-line;">{{ form().seller_addr }}</p>
+              <p *ngIf="form().seller_email">{{ form().seller_email }}</p>
+              <p *ngIf="form().seller_phone">{{ form().seller_phone }}</p>
+              <p *ngIf="form().seller_siren">SIREN : {{ form().seller_siren }}</p>
+            </div>
+            <div class="party">
+              <h3>Client</h3>
+              <p><strong>{{ form().client_name }}</strong></p>
+              <p style="white-space: pre-line;">{{ form().client_addr }}</p>
+              <p *ngIf="form().client_email">{{ form().client_email }}</p>
+              <p *ngIf="form().client_phone">{{ form().client_phone }}</p>
+            </div>
+          </div>
+
+          <!-- Dates -->
+          <div class="invoice-dates">
+            <p><strong>Date de facture :</strong> {{ dateHuman(form().inv_date) }}</p>
+            <p><strong>Date d'échéance :</strong> {{ dateHuman(totals().dueDate) }}</p>
+          </div>
+
+          <!-- Tableau des prestations -->
+          <table class="invoice-table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th class="text-right">Quantité</th>
+                <th class="text-right">Prix unitaire</th>
+                <th class="text-right">Montant HT</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ form().item_desc }}</td>
+                <td class="text-right">{{ form().days }}</td>
+                <td class="text-right">{{ fmt(form().tjm) }}</td>
+                <td class="text-right">{{ fmt(totals().line) }}</td>
+              </tr>
+              <tr *ngIf="form().discount > 0">
+                <td colspan="3" class="text-right"><strong>Remise</strong></td>
+                <td class="text-right">-{{ fmt(form().discount) }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3" class="text-right"><strong>Total HT</strong></td>
+                <td class="text-right"><strong>{{ fmt(totals().afterDiscount) }}</strong></td>
+              </tr>
+              <tr *ngIf="totals().vatRate > 0">
+                <td colspan="3" class="text-right">TVA ({{ (totals().vatRate * 100).toFixed(1) }}%)</td>
+                <td class="text-right">{{ fmt(totals().vat) }}</td>
+              </tr>
+              <tr class="total-row">
+                <td colspan="3" class="text-right"><strong>Total TTC</strong></td>
+                <td class="text-right"><strong>{{ fmt(totals().ttc) }}</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <!-- Mentions légales -->
+          <div class="invoice-footer">
+            <div class="legal-mentions">
+              <p *ngIf="form().vat_mode === 'franchise'">
+                <strong>TVA non applicable</strong> – article 293 B du CGI
+              </p>
+              <p><strong>Conditions de paiement :</strong> Paiement à {{ form().due_days }} jours</p>
+              <p *ngIf="form().seller_iban"><strong>IBAN :</strong> {{ form().seller_iban }}</p>
+              <p *ngIf="form().seller_bic"><strong>BIC :</strong> {{ form().seller_bic }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
