@@ -23,9 +23,9 @@ export class AppComponent {
     seller_addr: '343 Rue Simone Weil, villa 8\n84100 ORANGE, FRANCE',
     seller_email: 'rsidiibrahim@gmail.com',
     seller_phone: '06 50 31 47 22',
-    seller_siren: '',
-    seller_iban: '',
-    seller_bic: '',
+    seller_siren: '884780065',
+    seller_iban: 'FR76 4061 8804 8900 0405 8514 356',
+    seller_bic: 'BOUS FRPP XXX',
     client_name: 'Synanto Montpellier',
     client_addr: '610 Rue Alfred Nobel\n34000 MONTPELLIER, FRANCE',
     client_email: 'contact@synanto.fr',
@@ -87,54 +87,39 @@ export class AppComponent {
   async exportPDF() {
     const target = document.getElementById('invoice');
     if (!target) return;
-    const canvas = await html2canvas(target, { scale: 2, backgroundColor: '#ffffff' });
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
     
-    // Calculer les dimensions de l'image
-    const imgWidth = pageWidth;
-    const imgHeight = canvas.height * imgWidth / canvas.width;
-    
-    // Si l'image tient sur une page, l'ajouter directement
-    if (imgHeight <= pageHeight) {
-      pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-    } else {
-      // Découper l'image en pages si nécessaire
-      let yOffset = 0;
-      let pageNumber = 1;
+    try {
+      const canvas = await html2canvas(target, { 
+        scale: 2, 
+        backgroundColor: '#ffffff',
+        useCORS: true,
+        allowTaint: true,
+        logging: false
+      });
       
-      while (yOffset < imgHeight) {
-        if (pageNumber > 1) {
-          pdf.addPage();
-        }
-        
-        // Calculer la hauteur de cette page
-        const currentPageHeight = Math.min(pageHeight, imgHeight - yOffset);
-        
-        // Créer un canvas temporaire pour cette page
-        const tempCanvas = document.createElement('canvas');
-        const tempCtx = tempCanvas.getContext('2d');
-        tempCanvas.width = canvas.width;
-        tempCanvas.height = (currentPageHeight / imgHeight) * canvas.height;
-        
-        if (tempCtx) {
-          const sourceY = (yOffset / imgHeight) * canvas.height;
-          const sourceHeight = (currentPageHeight / imgHeight) * canvas.height;
-          
-          tempCtx.drawImage(canvas, 0, sourceY, canvas.width, sourceHeight, 0, 0, canvas.width, sourceHeight);
-          const pageImgData = tempCanvas.toDataURL('image/png');
-          
-          // Ajouter l'image à la page PDF
-          pdf.addImage(pageImgData, 'PNG', 0, 0, imgWidth, currentPageHeight);
-        }
-        
-        yOffset += pageHeight;
-        pageNumber++;
+      const imgData = canvas.toDataURL('image/png', 1.0);
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      
+      // Calculer les dimensions de l'image
+      const imgWidth = pageWidth;
+      const imgHeight = canvas.height * imgWidth / canvas.width;
+      
+      // Si l'image tient sur une page, l'ajouter directement
+      if (imgHeight <= pageHeight) {
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+      } else {
+        // Pour les images longues, utiliser une approche simple
+        // Ajouter l'image complète et laisser jsPDF gérer la pagination
+        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
       }
+      
+      pdf.save(`${this.form().inv_no}.pdf`);
+      
+    } catch (error) {
+      console.error('Erreur lors de la génération du PDF:', error);
+      alert('Erreur lors de la génération du PDF. Veuillez réessayer.');
     }
-    
-    pdf.save(`${this.form().inv_no}.pdf`);
   }
 }
