@@ -124,6 +124,30 @@
           </div>
         </fieldset>
 
+        <!-- Signature manuscrite -->
+        <fieldset>
+          <legend>Signature</legend>
+          <div class="form-group">
+            <label>Signature de l'émetteur</label>
+            <div style="border:1px solid #ccc; border-radius:6px; padding:8px; background:#fafafa;">
+              <canvas id="signaturePad" width="600" height="200"
+                      (mousedown)="onPointerDown($event)"
+                      (mousemove)="onPointerMove($event)"
+                      (mouseup)="onPointerUp()"
+                      (mouseleave)="onPointerUp()"
+                      (touchstart)="onTouchStart($event)"
+                      (touchmove)="onTouchMove($event)"
+                      (touchend)="onPointerUp()"
+                      style="width:100%; max-width:100%; height:200px; display:block; background:#fff; cursor: crosshair;"></canvas>
+              <div class="button-group" style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
+                <button type="button" (click)="clearSignature()">🧹 Effacer</button>
+                <button type="button" (click)="saveSignature()">💾 Enregistrer la signature</button>
+                <small *ngIf="signatureDataUrl">Signature enregistrée.</small>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
         <!-- TVA -->
         <fieldset>
           <legend>TVA</legend>
@@ -181,7 +205,6 @@
 
           <!-- Dates -->
           <div class="invoice-dates">
-            <p><strong>Date de facture :</strong> {{ dateHuman(form().inv_date) }}</p>
             <p><strong>Date d'échéance :</strong> {{ dateHuman(totals().dueDate) }}</p>
           </div>
 
@@ -232,6 +255,10 @@
               <p><strong>Conditions de paiement :</strong> Paiement à {{ form().due_days }} jours</p>
               <p *ngIf="form().seller_iban"><strong>IBAN :</strong> {{ form().seller_iban }}</p>
               <p *ngIf="form().seller_bic"><strong>BIC :</strong> {{ form().seller_bic }}</p>
+              <div *ngIf="signatureDataUrl" class="signature-block">
+                <p><strong>Signature de l'émetteur</strong></p>
+                <img [src]="signatureDataUrl" alt="Signature" />
+              </div>
             </div>
           </div>
         </div>

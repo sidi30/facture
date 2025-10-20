@@ -17,6 +17,20 @@ export class AppComponent {
   // Defaults for September (current year) and 7 days worked, TJM 465€
   now = new Date();
   currentYear = this.now.getFullYear();
+  
+  private getBusinessDaysInMonth(year: number, monthIndex: number): number {
+    // monthIndex: 0-11
+    const date = new Date(year, monthIndex, 1);
+    let count = 0;
+    while (date.getMonth() === monthIndex) {
+      const day = date.getDay(); // 0=Dim, 6=Sam
+      if (day !== 0 && day !== 6) count++;
+      date.setDate(date.getDate() + 1);
+    }
+    return count;
+  }
+
+  signatureDateISO = this.toISO(new Date());
   form = signal({
     seller_name: 'Ramzi SIDI IBRAHIM',
     seller_status: 'Entrepreneur individuel (Micro)',
@@ -34,7 +48,8 @@ export class AppComponent {
     inv_date: this.toISO(new Date(this.currentYear, 8, 30)), // 30 Sept (month index 8)
     due_days: 30,
     item_desc: 'Prestation de développement / consulting (septembre)',
-    days: 7,
+    // Par défaut: nombre de jours ouvrés du mois de la facture (ici septembre)
+    days: this.getBusinessDaysInMonth(this.currentYear, 8),
     tjm: 465,
     discount: 0,
     vat_mode: 'franchise' as VatMode,
@@ -44,6 +59,123 @@ export class AppComponent {
   addDays(dStr: string, n: number) { const d = new Date(dStr); d.setDate(d.getDate()+n); return this.toISO(d); }
   dateHuman(dStr: string) { return new Date(dStr+ 'T00:00:00').toLocaleDateString('fr-FR', { year:'numeric', month:'long', day:'2-digit'}); }
   fmt(n: number) { return new Intl.NumberFormat('fr-FR', { style:'currency', currency:'EUR'}).format(n||0); }
+
+  // --- Signature ---
+  private isDrawing = false;
+  private lastPoint: { x: number; y: number } | null = null;
+  signatureDataUrl: string | null = null;
+
+  ngAfterViewInit() {
+    // Recharger la signature sauvegardée
+    const saved = localStorage.getItem('invoice-signature');
+    if (saved) {
+      this.signatureDataUrl = saved;
+      // rien à dessiner ici, l'image s'affichera via [src]
+    }
+
+    // Préparer le canvas pour dessiner en haute résolution
+    const canvas = document.getElementById('signaturePad') as HTMLCanvasElement | null;
+    if (canvas) {
+      const ratio = Math.max(window.devicePixelRatio || 1, 1);
+      const displayWidth = canvas.clientWidth;
+      const displayHeight = canvas.clientHeight;
+      if (displayWidth && displayHeight) {
+        canvas.width = Math.floor(displayWidth * ratio);
+        canvas.height = Math.floor(displayHeight * ratio);
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.scale(ratio, ratio);
+          ctx.lineJoin = 'round';
+          ctx.lineCap = 'round';
+          ctx.strokeStyle = '#111';
+          ctx.lineWidth = 2.5;
+        }
+      }
+    }
+  }
+
+  private getCanvasAndCtx(): { canvas: HTMLCanvasElement; ctx: CanvasRenderingContext2D } | null {
+    const canvas = document.getElementById('signaturePad') as HTMLCanvasElement | null;
+    if (!canvas) return null;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+    return { canvas, ctx };
+  }
+
+  private getRelativePos(evt: MouseEvent | Touch): { x: number; y: number } {
+    const canvas = document.getElementById('signaturePad') as HTMLCanvasElement;
+    const rect = canvas.getBoundingClientRect();
+    return { x: (evt.clientX - rect.left), y: (evt.clientY - rect.top) };
+  }
+
+  onPointerDown(event: MouseEvent) {
+    event.preventDefault();
+    this.isDrawing = true;
+    this.lastPoint = this.getRelativePos(event);
+  }
+
+  onPointerMove(event: MouseEvent) {
+    if (!this.isDrawing || !this.lastPoint) return;
+    const ref = this.getCanvasAndCtx();
+    if (!ref) return;
+    const { ctx } = ref;
+    const current = this.getRelativePos(event);
+    ctx.beginPath();
+    ctx.moveTo(this.lastPoint.x, this.lastPoint.y);
+    ctx.lineTo(current.x, current.y);
+    ctx.stroke();
+    this.lastPoint = current;
+  }
+
+  onPointerUp() {
+    this.isDrawing = false;
+    this.lastPoint = null;
+  }
+
+  onTouchStart(event: TouchEvent) {
+    event.preventDefault();
+    if (event.touches.length > 0) {
+      const t = event.touches[0];
+      this.isDrawing = true;
+      this.lastPoint = this.getRelativePos(t);
+    }
+  }
+
+  onTouchMove(event: TouchEvent) {
+    event.preventDefault();
+    if (!this.isDrawing || !this.lastPoint) return;
+    const ref = this.getCanvasAndCtx();
+    if (!ref) return;
+    const { ctx } = ref;
+    if (event.touches.length > 0) {
+      const t = event.touches[0];
+      const current = this.getRelativePos(t);
+      ctx.beginPath();
+      ctx.moveTo(this.lastPoint.x, this.lastPoint.y);
+      ctx.lineTo(current.x, current.y);
+      ctx.stroke();
+      this.lastPoint = current;
+    }
+  }
+
+  clearSignature() {
+    const ref = this.getCanvasAndCtx();
+    if (!ref) return;
+    const { canvas, ctx } = ref;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    this.signatureDataUrl = null;
+    localStorage.removeItem('invoice-signature');
+  }
+
+  saveSignature() {
+    const ref = this.getCanvasAndCtx();
+    if (!ref) return;
+    const { canvas } = ref;
+    // Exporter en PNG haute qualité
+    const dataUrl = canvas.toDataURL('image/png');
+    this.signatureDataUrl = dataUrl;
+    localStorage.setItem('invoice-signature', dataUrl);
+  }
 
   totals = computed(() => {
     const f = this.form();

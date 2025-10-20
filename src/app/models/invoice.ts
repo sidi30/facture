@@ -120,3 +120,4 @@ export const VAT_LABELS: Record<VatMode, string> = {
   tva5_5: 'TVA 5,5 %'
 };
 
+

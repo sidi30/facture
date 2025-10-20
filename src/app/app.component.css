@@ -36,9 +36,16 @@ header h1 {
 
 .layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 3fr 2fr; /* Donne plus d'espace au formulaire */
   gap: 2rem;
   align-items: start;
+}
+
+/* Ajustement progressif pour écrans moyens */
+@media (max-width: 1280px) {
+  .layout {
+    grid-template-columns: 5fr 4fr;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -294,6 +301,20 @@ button:hover {
   margin: 0.5rem 0;
   font-size: 0.75rem;
   color: var(--gray-600);
+}
+
+/* Signature alignée à droite */
+.signature-block {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end; /* Aligne à droite */
+  gap: 6px;
+}
+
+.signature-block img {
+  height: 80px;
+  object-fit: contain;
 }
 
 /* Print styles */
