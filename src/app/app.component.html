@@ -232,8 +232,8 @@
           </div>
         </fieldset>
 
-        <!-- Signature manuscrite (classique) -->
-        <fieldset *ngIf="templateMode() === 'standard'">
+        <!-- Signature manuscrite -->
+        <fieldset>
           <legend>Signature</legend>
           <div class="form-group">
             <label>Signature de l'émetteur</label>
@@ -253,6 +253,7 @@
                 <small *ngIf="signatureDataUrl">Signature enregistrée.</small>
               </div>
             </div>
+            <small>La signature s'affichera automatiquement dans l'aperçu de la facture (modèle classique uniquement).</small>
           </div>
         </fieldset>
 

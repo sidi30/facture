@@ -125,6 +125,10 @@ temp/
 *.sln
 *.sw?
 
+# Executable builds
+*.exe
+/release
+
 
 
 

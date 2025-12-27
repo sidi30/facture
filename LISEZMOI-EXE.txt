@@ -1,0 +1,53 @@
+═══════════════════════════════════════════════════════════════
+  GÉNÉRATEUR DE FACTURES - Application Portable
+═══════════════════════════════════════════════════════════════
+
+📦 UTILISATION
+--------------
+
+1. Double-cliquez sur « facture-app.exe »
+2. Une fenêtre de terminal s'ouvre (ne la fermez pas !)
+3. Votre navigateur s'ouvre automatiquement sur l'application
+4. Créez vos factures et générez des PDF !
+
+✨ FONCTIONNALITÉS
+------------------
+
+✓ Aucune installation requise
+✓ Fonctionne complètement OFFLINE (pas besoin d'internet)
+✓ Génération de PDF professionnels
+✓ Sauvegarde automatique (dans le navigateur)
+✓ Modèle classique + Modèle CAPRÈS personnalisable
+✓ Signature manuscrite intégrée
+✓ Calculs automatiques (HT, TVA, TTC)
+
+🌐 ACCÈS
+--------
+
+Si le navigateur ne s'ouvre pas automatiquement :
+→ Ouvrez manuellement : http://localhost:3500
+
+🛑 ARRÊT
+--------
+
+Pour fermer l'application :
+→ Fermez simplement la fenêtre du terminal
+   (ou appuyez sur Ctrl+C dedans)
+
+⚠️ IMPORTANT
+------------
+
+• NE FERMEZ PAS la fenêtre du terminal tant que vous utilisez l'app
+• Toutes vos données sont sauvegardées dans le navigateur (localStorage)
+• L'exe peut être copié sur clé USB ou partagé par email
+
+📋 DONNÉES
+----------
+
+Vos factures sont automatiquement sauvegardées localement.
+Pour exporter : utilisez les fonctions "Générer PDF" dans l'app.
+
+═══════════════════════════════════════════════════════════════
+  Développé avec Angular - Version portable Windows
+═══════════════════════════════════════════════════════════════
+

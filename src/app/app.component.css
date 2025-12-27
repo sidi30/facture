@@ -313,15 +313,25 @@ button:hover {
 
 /* Signature alignée à droite */
 .signature-block {
-  margin-top: 16px;
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid var(--gray-200);
   display: flex;
   flex-direction: column;
   align-items: flex-end; /* Aligne à droite */
-  gap: 6px;
+  gap: 8px;
+}
+
+.signature-block p {
+  margin: 0 0 4px 0;
+  font-size: 0.85rem;
+  color: var(--gray-700);
 }
 
 .signature-block img {
-  height: 140px;
+  max-width: 250px;
+  height: auto;
+  max-height: 140px;
   object-fit: contain;
 }
 

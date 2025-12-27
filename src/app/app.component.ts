@@ -147,7 +147,6 @@ export class AppComponent {
     const saved = localStorage.getItem('invoice-signature');
     if (saved) {
       this.signatureDataUrl = saved;
-      // rien à dessiner ici, l'image s'affichera via [src]
     }
 
     // Recharger un logo CAPRÈS si disponible
@@ -156,23 +155,30 @@ export class AppComponent {
       this.capresLogoDataUrl = storedLogo;
     }
 
-    // Préparer le canvas pour dessiner en haute résolution
+    // Initialiser le canvas après un court délai pour s'assurer qu'il est dans le DOM
+    setTimeout(() => {
+      this.initializeSignatureCanvas();
+    }, 100);
+  }
+
+  private initializeSignatureCanvas() {
     const canvas = document.getElementById('signaturePad') as HTMLCanvasElement | null;
-    if (canvas) {
-      const ratio = Math.max(window.devicePixelRatio || 1, 1);
-      const displayWidth = canvas.clientWidth;
-      const displayHeight = canvas.clientHeight;
-      if (displayWidth && displayHeight) {
-        canvas.width = Math.floor(displayWidth * ratio);
-        canvas.height = Math.floor(displayHeight * ratio);
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.scale(ratio, ratio);
-          ctx.lineJoin = 'round';
-          ctx.lineCap = 'round';
-          ctx.strokeStyle = '#111';
-          ctx.lineWidth = 2.5;
-        }
+    if (!canvas) return;
+    
+    const ratio = Math.max(window.devicePixelRatio || 1, 1);
+    const displayWidth = canvas.clientWidth;
+    const displayHeight = canvas.clientHeight;
+    
+    if (displayWidth && displayHeight) {
+      canvas.width = Math.floor(displayWidth * ratio);
+      canvas.height = Math.floor(displayHeight * ratio);
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.scale(ratio, ratio);
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#111';
+        ctx.lineWidth = 2.5;
       }
     }
   }
@@ -304,6 +310,10 @@ export class AppComponent {
 
   setTemplate(mode: 'standard' | 'capres') {
     this.templateMode.set(mode);
+    // Ré-initialiser le canvas après changement de mode
+    setTimeout(() => {
+      this.initializeSignatureCanvas();
+    }, 100);
   }
 
   onCapresLogoSelected(event: Event) {
