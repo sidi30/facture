@@ -121,6 +121,7 @@ export class AppComponent {
     capres_activity_3: 'Prestations Diverses',
     capres_nif: '7187B/P',
     capres_rccm: 'RCCM-NE-NIM-01-2021-A10-00281',
+    capres_bank_name: 'BAGRI',
     capres_compte: '029032780002',
     capres_reference_label: 'Objet / Référence',
     capres_reference_value: 'Prestation de service',

@@ -57,9 +57,15 @@
                 <input type="text" [value]="form().capres_rccm" (input)="updateForm('capres_rccm', $any($event.target).value)">
               </div>
             </div>
-            <div class="form-group">
-              <label>Compte bancaire (BAGRI)</label>
-              <input type="text" [value]="form().capres_compte" (input)="updateForm('capres_compte', $any($event.target).value)">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Nom de la banque</label>
+                <input type="text" [value]="form().capres_bank_name" (input)="updateForm('capres_bank_name', $any($event.target).value)" placeholder="Ex: BAGRI, BOA, etc.">
+              </div>
+              <div class="form-group">
+                <label>Numéro de compte</label>
+                <input type="text" [value]="form().capres_compte" (input)="updateForm('capres_compte', $any($event.target).value)">
+              </div>
             </div>
             <div class="form-row">
               <div class="form-group">
@@ -399,7 +405,7 @@
             </div>
 
             <div class="capres-account-line">
-              Compte BAGRI N° <span class="value">{{ form().capres_compte }}</span>
+              Compte {{ form().capres_bank_name }} N° <span class="value">{{ form().capres_compte }}</span>
             </div>
 
             <div class="capres-body-blank">
