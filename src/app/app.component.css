@@ -15,29 +15,13 @@
 .container {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 2rem 1rem;
-}
-
-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-header h1 {
-  color: var(--gray-900);
-  font-size: 2rem;
-  margin: 0 0 0.5rem 0;
-}
-
-.subtitle {
-  color: var(--gray-600);
-  font-size: 1rem;
+  padding: 2.5rem 1.5rem;
 }
 
 .layout {
   display: grid;
   grid-template-columns: 3fr 2fr; /* Donne plus d'espace au formulaire */
-  gap: 2rem;
+  gap: 2.5rem;
   align-items: start;
 }
 
@@ -59,7 +43,7 @@ header h1 {
   background: white;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-  padding: 1.5rem;
+  padding: 1.75rem;
 }
 
 .card h2 {
@@ -72,8 +56,8 @@ header h1 {
 fieldset {
   border: 1px solid var(--gray-200);
   border-radius: 6px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  margin-bottom: 1.75rem;
 }
 
 fieldset legend {
@@ -175,6 +159,30 @@ button:hover {
 
 .btn-secondary:hover {
   background: var(--gray-200) !important;
+}
+
+.capres-config {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px dashed var(--gray-200);
+  border-radius: 6px;
+  background: #fdfdfd;
+}
+
+.capres-logo-preview {
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.capres-logo-preview img {
+  height: 72px;
+  width: auto;
+  border: 1px solid var(--gray-200);
+  border-radius: 4px;
+  background: white;
+  padding: 4px;
 }
 
 .actions {
@@ -313,7 +321,7 @@ button:hover {
 }
 
 .signature-block img {
-  height: 80px;
+  height: 140px;
   object-fit: contain;
 }
 
@@ -341,6 +349,230 @@ button:hover {
   .invoice {
     border: none;
     box-shadow: none;
+  }
+}
+
+/* ---- Modèle CAPRÈS (reproduction A4) ---- */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+.capres-page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid #dcdcdc;
+  box-sizing: border-box;
+  padding: 12mm 14mm 10mm;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Arial', sans-serif;
+  font-size: 10pt;
+  color: #111;
+}
+
+@media screen {
+  .capres-page {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+}
+
+.capres-header-row {
+  display: grid;
+  grid-template-columns: 115px 1fr 160px;
+  align-items: start;
+  column-gap: 10px;
+  row-gap: 6px;
+}
+
+.capres-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.capres-logo,
+.capres-logo-placeholder {
+  width: 110px;
+  height: 95px;
+}
+
+.capres-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.capres-logo-placeholder {
+  border: 2px dashed #d0262b;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d0262b;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.capres-activities {
+  font-size: 8.5pt;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.capres-center {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.capres-title {
+  font-weight: 600;
+  font-size: 11.5pt;
+  letter-spacing: 0.1px;
+}
+
+.capres-owner {
+  font-weight: 700;
+  font-size: 10.5pt;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+
+.capres-right {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 9pt;
+  font-weight: 600;
+}
+
+.capres-meta .label {
+  font-weight: 700;
+}
+
+.capres-meta .value {
+  font-weight: 700;
+}
+
+.capres-account-line {
+  margin-top: 6px;
+  padding-top: 6px;
+  font-size: 9pt;
+  text-align: center;
+  border-top: 1px solid #111;
+  border-bottom: 1px solid #111;
+  padding-bottom: 6px;
+  font-weight: 500;
+}
+
+.capres-account-line .value {
+  font-weight: 700;
+}
+
+.capres-body-blank {
+  flex: 1;
+  min-height: 680px;
+  padding: 10px 4px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.capres-body-ref {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9pt;
+  font-weight: 500;
+}
+
+.capres-body-text {
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  padding: 10px 12px;
+  min-height: 140px;
+  background: #fdfdfd;
+  line-height: 1.45;
+}
+
+.capres-footer-row {
+  border-top: 2px solid #111;
+  padding-top: 10px;
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px 18px;
+  align-items: center;
+  font-size: 9pt;
+}
+
+.capres-footer-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.capres-tel-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.capres-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.capres-dot.whatsapp { background: #25d366; }
+.capres-dot.location { background: #1f5fbf; }
+.capres-dot.mail { background: #1f83ff; }
+
+.capres-dot::after {
+  content: '';
+}
+
+.capres-dot.whatsapp::after { content: '☎'; }
+.capres-dot.location::after { content: '📍'; }
+.capres-dot.mail::after { content: '✉'; }
+
+.capres-subtel {
+  font-size: 8.5pt;
+  line-height: 1.2;
+}
+
+@media (max-width: 900px) {
+  .capres-header-row {
+    grid-template-columns: 1fr;
+    text-align: center;
+    justify-items: center;
+  }
+  .capres-body-ref {
+    flex-direction: column;
+    gap: 4px;
+  }
+  .capres-footer-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media print {
+  .capres-page {
+    border: none;
+    box-shadow: none;
+    page-break-inside: avoid;
   }
 }
 

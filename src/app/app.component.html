@@ -1,17 +1,125 @@
 <div class="container">
-  <header>
-    <h1>{{ title }}</h1>
-    <p class="subtitle">Créez et générez vos factures professionnelles en PDF</p>
-  </header>
-
   <div class="layout">
     <!-- Formulaire -->
     <section class="form-section">
       <div class="card">
         <h2>📋 Informations de la facture</h2>
 
-        <!-- Émetteur -->
+        <!-- Modèle -->
         <fieldset>
+          <legend>Modèle et mise en page</legend>
+          <div class="button-group">
+            <button type="button"
+                    [class.btn-primary]="templateMode() === 'standard'"
+                    (click)="setTemplate('standard')">
+              🧾 Modèle classique
+            </button>
+            <button type="button"
+                    [class.btn-primary]="templateMode() === 'capres'"
+                    (click)="setTemplate('capres')">
+              🪶 Modèle CAPRÈS (entête + pied)
+            </button>
+          </div>
+          <small>Choisissez le rendu à imprimer ou exporter en PDF. Le modèle classique reste inchangé.</small>
+
+          <div *ngIf="templateMode() === 'capres'" class="capres-config">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Titre d'en-tête</label>
+                <input type="text" [value]="form().capres_header_title" (input)="updateForm('capres_header_title', $any($event.target).value)">
+              </div>
+              <div class="form-group">
+                <label>Nom / porteur</label>
+                <input type="text" [value]="form().capres_owner" (input)="updateForm('capres_owner', $any($event.target).value)">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Activité 1</label>
+                <input type="text" [value]="form().capres_activity_1" (input)="updateForm('capres_activity_1', $any($event.target).value)">
+              </div>
+              <div class="form-group">
+                <label>Activité 2</label>
+                <input type="text" [value]="form().capres_activity_2" (input)="updateForm('capres_activity_2', $any($event.target).value)">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Activité 3</label>
+              <input type="text" [value]="form().capres_activity_3" (input)="updateForm('capres_activity_3', $any($event.target).value)">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>NIF</label>
+                <input type="text" [value]="form().capres_nif" (input)="updateForm('capres_nif', $any($event.target).value)">
+              </div>
+              <div class="form-group">
+                <label>RCCM</label>
+                <input type="text" [value]="form().capres_rccm" (input)="updateForm('capres_rccm', $any($event.target).value)">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Compte bancaire (BAGRI)</label>
+              <input type="text" [value]="form().capres_compte" (input)="updateForm('capres_compte', $any($event.target).value)">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Date du document</label>
+                <input type="date" [value]="form().inv_date" (input)="updateForm('inv_date', $any($event.target).value)">
+              </div>
+              <div class="form-group">
+                <label>{{ form().capres_reference_label }}</label>
+                <input type="text" [value]="form().capres_reference_value" (input)="updateForm('capres_reference_value', $any($event.target).value)">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Label de référence</label>
+                <input type="text" [value]="form().capres_reference_label" (input)="updateForm('capres_reference_label', $any($event.target).value)">
+              </div>
+              <div class="form-group">
+                <label>Titre du bloc prestation</label>
+                <input type="text" [value]="form().capres_body_title" (input)="updateForm('capres_body_title', $any($event.target).value)">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Texte libre de prestation</label>
+              <textarea rows="4" [value]="form().capres_body_text" (input)="updateForm('capres_body_text', $any($event.target).value)"></textarea>
+              <small>Ce texte apparaît dans le bloc central (zone blanche) du modèle CAPRÈS.</small>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Téléphone principal</label>
+                <input type="text" [value]="form().capres_footer_tel_main" (input)="updateForm('capres_footer_tel_main', $any($event.target).value)">
+              </div>
+              <div class="form-group">
+                <label>Autres téléphones</label>
+                <input type="text" [value]="form().capres_footer_tel_alt" (input)="updateForm('capres_footer_tel_alt', $any($event.target).value)">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Adresse</label>
+                <input type="text" [value]="form().capres_footer_address" (input)="updateForm('capres_footer_address', $any($event.target).value)">
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" [value]="form().capres_footer_email" (input)="updateForm('capres_footer_email', $any($event.target).value)">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Logo (PNG/JPG)</label>
+              <input type="file" accept="image/*" (change)="onCapresLogoSelected($event)">
+              <div class="capres-logo-preview" *ngIf="capresLogoDataUrl">
+                <img [src]="capresLogoDataUrl" alt="Logo CAPRÈS">
+                <button type="button" (click)="clearCapresLogo()">Retirer le logo</button>
+              </div>
+              <small>Le logo est optionnel. Si aucun logo n'est chargé, un marqueur texte est affiché.</small>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Émetteur (classique) -->
+        <fieldset *ngIf="templateMode() === 'standard'">
           <legend>Émetteur</legend>
           <div class="form-group">
             <label>Nom / Raison sociale *</label>
@@ -51,8 +159,8 @@
           </div>
         </fieldset>
 
-        <!-- Client -->
-        <fieldset>
+        <!-- Client (classique) -->
+        <fieldset *ngIf="templateMode() === 'standard'">
           <legend>Client</legend>
           <div class="form-group">
             <label>Presets clients</label>
@@ -81,8 +189,8 @@
           </div>
         </fieldset>
 
-        <!-- Détails facture -->
-        <fieldset>
+        <!-- Détails facture (classique) -->
+        <fieldset *ngIf="templateMode() === 'standard'">
           <legend>Détails de la facture</legend>
           <div class="form-row">
             <div class="form-group">
@@ -101,8 +209,8 @@
           </div>
         </fieldset>
 
-        <!-- Prestation -->
-        <fieldset>
+        <!-- Prestation (classique) -->
+        <fieldset *ngIf="templateMode() === 'standard'">
           <legend>Prestation</legend>
           <div class="form-group">
             <label>Description *</label>
@@ -124,13 +232,13 @@
           </div>
         </fieldset>
 
-        <!-- Signature manuscrite -->
-        <fieldset>
+        <!-- Signature manuscrite (classique) -->
+        <fieldset *ngIf="templateMode() === 'standard'">
           <legend>Signature</legend>
           <div class="form-group">
             <label>Signature de l'émetteur</label>
             <div style="border:1px solid #ccc; border-radius:6px; padding:8px; background:#fafafa;">
-              <canvas id="signaturePad" width="600" height="200"
+              <canvas id="signaturePad" width="900" height="280"
                       (mousedown)="onPointerDown($event)"
                       (mousemove)="onPointerMove($event)"
                       (mouseup)="onPointerUp()"
@@ -138,7 +246,7 @@
                       (touchstart)="onTouchStart($event)"
                       (touchmove)="onTouchMove($event)"
                       (touchend)="onPointerUp()"
-                      style="width:100%; max-width:100%; height:200px; display:block; background:#fff; cursor: crosshair;"></canvas>
+                      style="width:100%; max-width:100%; height:280px; display:block; background:#fff; cursor: crosshair;"></canvas>
               <div class="button-group" style="margin-top:8px; display:flex; gap:8px; flex-wrap:wrap;">
                 <button type="button" (click)="clearSignature()">🧹 Effacer</button>
                 <button type="button" (click)="saveSignature()">💾 Enregistrer la signature</button>
@@ -148,8 +256,8 @@
           </div>
         </fieldset>
 
-        <!-- TVA -->
-        <fieldset>
+        <!-- TVA (classique) -->
+        <fieldset *ngIf="templateMode() === 'standard'">
           <legend>TVA</legend>
           <div class="form-group">
             <label>Mode de TVA</label>
@@ -174,94 +282,156 @@
     <section class="preview-section">
       <div class="card">
         <h2>👁️ Aperçu</h2>
-        <div id="invoice" class="invoice">
-          <!-- En-tête -->
-          <div class="invoice-header">
-            <div class="invoice-title">
-              <h1>FACTURE</h1>
-              <p class="invoice-number">{{ form().inv_no }}</p>
+        <ng-container [ngSwitch]="templateMode()">
+          <div *ngSwitchCase="'standard'" id="invoice" class="invoice standard-invoice">
+            <!-- En-tête -->
+            <div class="invoice-header">
+              <div class="invoice-title">
+                <h1>FACTURE</h1>
+                <p class="invoice-number">{{ form().inv_no }}</p>
+              </div>
             </div>
-          </div>
 
-          <!-- Parties -->
-          <div class="invoice-parties">
-            <div class="party">
-              <h3>Émetteur</h3>
-              <p><strong>{{ form().seller_name }}</strong></p>
-              <p *ngIf="form().seller_status">{{ form().seller_status }}</p>
-              <p style="white-space: pre-line;">{{ form().seller_addr }}</p>
-              <p *ngIf="form().seller_email">{{ form().seller_email }}</p>
-              <p *ngIf="form().seller_phone">{{ form().seller_phone }}</p>
-              <p *ngIf="form().seller_siren">SIREN : {{ form().seller_siren }}</p>
+            <!-- Parties -->
+            <div class="invoice-parties">
+              <div class="party">
+                <h3>Émetteur</h3>
+                <p><strong>{{ form().seller_name }}</strong></p>
+                <p *ngIf="form().seller_status">{{ form().seller_status }}</p>
+                <p style="white-space: pre-line;">{{ form().seller_addr }}</p>
+                <p *ngIf="form().seller_email">{{ form().seller_email }}</p>
+                <p *ngIf="form().seller_phone">{{ form().seller_phone }}</p>
+                <p *ngIf="form().seller_siren">SIREN : {{ form().seller_siren }}</p>
+              </div>
+              <div class="party">
+                <h3>Client</h3>
+                <p><strong>{{ form().client_name }}</strong></p>
+                <p style="white-space: pre-line;">{{ form().client_addr }}</p>
+                <p *ngIf="form().client_email">{{ form().client_email }}</p>
+                <p *ngIf="form().client_phone">{{ form().client_phone }}</p>
+              </div>
             </div>
-            <div class="party">
-              <h3>Client</h3>
-              <p><strong>{{ form().client_name }}</strong></p>
-              <p style="white-space: pre-line;">{{ form().client_addr }}</p>
-              <p *ngIf="form().client_email">{{ form().client_email }}</p>
-              <p *ngIf="form().client_phone">{{ form().client_phone }}</p>
+
+            <!-- Dates -->
+            <div class="invoice-dates">
+              <p><strong>Date de facture :</strong> {{ dateHuman(form().inv_date) }}</p>
+              <p><strong>Date d'échéance :</strong> {{ dateHuman(totals().dueDate) }}</p>
             </div>
-          </div>
 
-          <!-- Dates -->
-          <div class="invoice-dates">
-            <p><strong>Date d'échéance :</strong> {{ dateHuman(totals().dueDate) }}</p>
-          </div>
+            <!-- Tableau des prestations -->
+            <table class="invoice-table">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th class="text-right">Quantité</th>
+                  <th class="text-right">Prix unitaire</th>
+                  <th class="text-right">Montant HT</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{ form().item_desc }}</td>
+                  <td class="text-right">{{ form().days }}</td>
+                  <td class="text-right">{{ fmt(form().tjm) }}</td>
+                  <td class="text-right">{{ fmt(totals().line) }}</td>
+                </tr>
+                <tr *ngIf="form().discount > 0">
+                  <td colspan="3" class="text-right"><strong>Remise</strong></td>
+                  <td class="text-right">-{{ fmt(form().discount) }}</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="3" class="text-right"><strong>Total HT</strong></td>
+                  <td class="text-right"><strong>{{ fmt(totals().afterDiscount) }}</strong></td>
+                </tr>
+                <tr *ngIf="totals().vatRate > 0">
+                  <td colspan="3" class="text-right">TVA ({{ (totals().vatRate * 100).toFixed(1) }}%)</td>
+                  <td class="text-right">{{ fmt(totals().vat) }}</td>
+                </tr>
+                <tr class="total-row">
+                  <td colspan="3" class="text-right"><strong>Total TTC</strong></td>
+                  <td class="text-right"><strong>{{ fmt(totals().ttc) }}</strong></td>
+                </tr>
+              </tfoot>
+            </table>
 
-          <!-- Tableau des prestations -->
-          <table class="invoice-table">
-            <thead>
-              <tr>
-                <th>Description</th>
-                <th class="text-right">Quantité</th>
-                <th class="text-right">Prix unitaire</th>
-                <th class="text-right">Montant HT</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{{ form().item_desc }}</td>
-                <td class="text-right">{{ form().days }}</td>
-                <td class="text-right">{{ fmt(form().tjm) }}</td>
-                <td class="text-right">{{ fmt(totals().line) }}</td>
-              </tr>
-              <tr *ngIf="form().discount > 0">
-                <td colspan="3" class="text-right"><strong>Remise</strong></td>
-                <td class="text-right">-{{ fmt(form().discount) }}</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="3" class="text-right"><strong>Total HT</strong></td>
-                <td class="text-right"><strong>{{ fmt(totals().afterDiscount) }}</strong></td>
-              </tr>
-              <tr *ngIf="totals().vatRate > 0">
-                <td colspan="3" class="text-right">TVA ({{ (totals().vatRate * 100).toFixed(1) }}%)</td>
-                <td class="text-right">{{ fmt(totals().vat) }}</td>
-              </tr>
-              <tr class="total-row">
-                <td colspan="3" class="text-right"><strong>Total TTC</strong></td>
-                <td class="text-right"><strong>{{ fmt(totals().ttc) }}</strong></td>
-              </tr>
-            </tfoot>
-          </table>
-
-          <!-- Mentions légales -->
-          <div class="invoice-footer">
-            <div class="legal-mentions">
-              <p *ngIf="form().vat_mode === 'franchise'">
-                <strong>TVA non applicable</strong> – article 293 B du CGI
-              </p>
-              <p><strong>Conditions de paiement :</strong> Paiement à {{ form().due_days }} jours</p>
-              <p *ngIf="form().seller_iban"><strong>IBAN :</strong> {{ form().seller_iban }}</p>
-              <p *ngIf="form().seller_bic"><strong>BIC :</strong> {{ form().seller_bic }}</p>
-              <div *ngIf="signatureDataUrl" class="signature-block">
-                <p><strong>Signature de l'émetteur</strong></p>
-                <img [src]="signatureDataUrl" alt="Signature" />
+            <!-- Mentions légales -->
+            <div class="invoice-footer">
+              <div class="legal-mentions">
+                <p *ngIf="form().vat_mode === 'franchise'">
+                  <strong>TVA non applicable</strong> – article 293 B du CGI
+                </p>
+                <p><strong>Conditions de paiement :</strong> Paiement à {{ form().due_days }} jours</p>
+                <p *ngIf="form().seller_iban"><strong>IBAN :</strong> {{ form().seller_iban }}</p>
+                <p *ngIf="form().seller_bic"><strong>BIC :</strong> {{ form().seller_bic }}</p>
+                <div *ngIf="signatureDataUrl" class="signature-block">
+                  <p><strong>Signature de l'émetteur</strong></p>
+                  <img [src]="signatureDataUrl" alt="Signature" />
+                </div>
               </div>
             </div>
           </div>
-        </div>
+
+          <div *ngSwitchCase="'capres'" id="invoice" class="capres-page">
+            <div class="capres-header-row">
+              <div class="capres-left">
+                <div class="capres-logo">
+                  <img [src]="capresLogoDataUrl || defaultCapresLogoPath" alt="Logo CAPRÈS">
+                </div>
+                <div class="capres-activities">
+                  <div>{{ form().capres_activity_1 }}</div>
+                  <div>{{ form().capres_activity_2 }}</div>
+                  <div>{{ form().capres_activity_3 }}</div>
+                </div>
+              </div>
+
+              <div class="capres-center">
+                <div class="capres-title">{{ form().capres_header_title }}</div>
+                <div class="capres-owner">{{ form().capres_owner }}</div>
+              </div>
+
+              <div class="capres-right">
+                <div class="capres-meta"><span class="label">NIF :</span> <span class="value">{{ form().capres_nif }}</span></div>
+                <div class="capres-meta"><span class="label">RCCM :</span> <span class="value">{{ form().capres_rccm }}</span></div>
+              </div>
+            </div>
+
+            <div class="capres-account-line">
+              Compte BAGRI N° <span class="value">{{ form().capres_compte }}</span>
+            </div>
+
+            <div class="capres-body-blank">
+              <div class="capres-body-ref">
+                <div>{{ form().capres_reference_label }} : {{ form().capres_reference_value }}</div>
+                <div>Date : {{ dateHuman(form().inv_date) }}</div>
+              </div>
+              <div *ngIf="form().capres_body_text" class="capres-body-text">
+                <p style="white-space: pre-line; margin: 0;">{{ form().capres_body_text }}</p>
+              </div>
+            </div>
+
+            <div class="capres-footer-row">
+              <div class="capres-footer-item">
+                <span class="capres-dot whatsapp"></span>
+                <div class="capres-tel-block">
+                  <div><strong>Tel :</strong> {{ form().capres_footer_tel_main }}</div>
+                  <div class="capres-subtel" *ngFor="let t of splitPhones(form().capres_footer_tel_alt)">
+                    {{ t }}
+                  </div>
+                </div>
+              </div>
+              <div class="capres-footer-item">
+                <span class="capres-dot location"></span>
+                <div><strong>Adresse :</strong> {{ form().capres_footer_address }}</div>
+              </div>
+              <div class="capres-footer-item">
+                <span class="capres-dot mail"></span>
+                <div><strong>Email :</strong> {{ form().capres_footer_email }}</div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
       </div>
     </section>
   </div>

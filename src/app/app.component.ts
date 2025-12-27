@@ -17,17 +17,77 @@ export class AppComponent {
   // Defaults for September (current year) and 7 days worked, TJM 465€
   now = new Date();
   currentYear = this.now.getFullYear();
+  templateMode = signal<'standard' | 'capres'>('standard');
+  capresLogoDataUrl: string | null = null;
+  readonly defaultCapresLogoPath = 'assets/logo capresco.png';
   
   private getBusinessDaysInMonth(year: number, monthIndex: number): number {
     // monthIndex: 0-11
+    const holidays = this.getFrenchPublicHolidays(year);
     const date = new Date(year, monthIndex, 1);
     let count = 0;
     while (date.getMonth() === monthIndex) {
       const day = date.getDay(); // 0=Dim, 6=Sam
-      if (day !== 0 && day !== 6) count++;
+      const iso = this.toISO(date);
+      if (day !== 0 && day !== 6 && !holidays.has(iso)) {
+        count++;
+      }
       date.setDate(date.getDate() + 1);
     }
     return count;
+  }
+
+  // Calcul des jours fériés France métropolitaine pour une année donnée
+  private getFrenchPublicHolidays(year: number): Set<string> {
+    const holidays = new Set<string>();
+    const add = (d: Date) => holidays.add(this.toISO(d));
+
+    // Fixes
+    add(new Date(year, 0, 1));   // Jour de l'an (1 janv)
+    add(new Date(year, 4, 1));   // Fête du Travail (1 mai)
+    add(new Date(year, 4, 8));   // Victoire 1945 (8 mai)
+    add(new Date(year, 6, 14));  // Fête Nationale (14 juil)
+    add(new Date(year, 7, 15));  // Assomption (15 août)
+    add(new Date(year, 10, 1));  // Toussaint (1 nov)
+    add(new Date(year, 10, 11)); // Armistice (11 nov)
+    add(new Date(year, 11, 25)); // Noël (25 déc)
+
+    // Mobiles (basés sur Pâques)
+    const easter = this.computeEasterSunday(year);
+    const easterMonday = this.addDaysDate(easter, 1);
+    const ascension = this.addDaysDate(easter, 39);
+    const pentecostMonday = this.addDaysDate(easter, 50);
+
+    add(easterMonday);      // Lundi de Pâques
+    add(ascension);         // Ascension (jeudi)
+    add(pentecostMonday);   // Lundi de Pentecôte
+
+    return holidays;
+  }
+
+  private addDaysDate(d: Date, n: number): Date {
+    const r = new Date(d);
+    r.setDate(r.getDate() + n);
+    return r;
+  }
+
+  // Algorithme de Butcher/Meeus pour Pâques (calendrier grégorien)
+  private computeEasterSunday(year: number): Date {
+    const a = year % 19;
+    const b = Math.floor(year / 100);
+    const c = year % 100;
+    const d = Math.floor(b / 4);
+    const e = b % 4;
+    const f = Math.floor((b + 8) / 25);
+    const g = Math.floor((b - f + 1) / 3);
+    const h = (19 * a + b - d - g + 15) % 30;
+    const i = Math.floor(c / 4);
+    const k = c % 4;
+    const l = (32 + 2 * e + 2 * i - h - k) % 7;
+    const m = Math.floor((a + 11 * h + 22 * l) / 451);
+    const month = Math.floor((h + l - 7 * m + 114) / 31) - 1; // 0=janvier
+    const day = ((h + l - 7 * m + 114) % 31) + 1;
+    return new Date(year, month, day);
   }
 
   signatureDateISO = this.toISO(new Date());
@@ -45,14 +105,31 @@ export class AppComponent {
     client_email: 'contact@synanto.fr',
     client_phone: '',
     inv_no: `FACT-${this.currentYear}-001`,
-    inv_date: this.toISO(new Date(this.currentYear, 8, 30)), // 30 Sept (month index 8)
+    inv_date: this.toISO(new Date()),
     due_days: 30,
     item_desc: 'Prestation de développement / consulting (septembre)',
-    // Par défaut: nombre de jours ouvrés du mois de la facture (ici septembre)
-    days: this.getBusinessDaysInMonth(this.currentYear, 8),
+    // Par défaut: nombre de jours ouvrés du mois de la date de facture (aujourd'hui)
+    days: this.getBusinessDaysInMonth(new Date().getFullYear(), new Date().getMonth()),
     tjm: 465,
     discount: 0,
     vat_mode: 'franchise' as VatMode,
+    // Champs spécifiques au modèle CAPRÈS
+    capres_header_title: 'Cabinet de Prestation de Service et Commerce',
+    capres_owner: 'SIDI IBRAHIM',
+    capres_activity_1: 'Etudes',
+    capres_activity_2: 'Formations',
+    capres_activity_3: 'Prestations Diverses',
+    capres_nif: '7187B/P',
+    capres_rccm: 'RCCM-NE-NIM-01-2021-A10-00281',
+    capres_compte: '029032780002',
+    capres_reference_label: 'Objet / Référence',
+    capres_reference_value: 'Prestation de service',
+    capres_body_title: 'Détails de la prestation',
+    capres_body_text: '',
+    capres_footer_address: '1 Rue BF185 Banifandou II Niamey - Niger',
+    capres_footer_email: 'isidiimyaki@gmail.com',
+    capres_footer_tel_main: '(00227) 96 97 63 83',
+    capres_footer_tel_alt: '94 97 63 83 / 93 97 63 83 / 92 55 36 00',
   });
 
   toISO(d: Date) { return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10); }
@@ -71,6 +148,12 @@ export class AppComponent {
     if (saved) {
       this.signatureDataUrl = saved;
       // rien à dessiner ici, l'image s'affichera via [src]
+    }
+
+    // Recharger un logo CAPRÈS si disponible
+    const storedLogo = localStorage.getItem('capres-logo');
+    if (storedLogo) {
+      this.capresLogoDataUrl = storedLogo;
     }
 
     // Préparer le canvas pour dessiner en haute résolution
@@ -189,6 +272,13 @@ export class AppComponent {
   });
 
   updateForm(key: string, value: any) {
+    // Si la date de facture change, recalcule automatiquement les jours ouvrés du mois correspondant
+    if (key === 'inv_date' && typeof value === 'string' && value) {
+      const d = new Date(value + 'T00:00:00');
+      const businessDays = this.getBusinessDaysInMonth(d.getFullYear(), d.getMonth());
+      this.form.update(current => ({ ...current, inv_date: value, days: businessDays }));
+      return;
+    }
     this.form.update(current => ({ ...current, [key]: value }));
   }
 
@@ -210,6 +300,38 @@ export class AppComponent {
       client_email: '',
       client_phone: '',
     }));
+  }
+
+  setTemplate(mode: 'standard' | 'capres') {
+    this.templateMode.set(mode);
+  }
+
+  onCapresLogoSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result as string;
+      this.capresLogoDataUrl = result;
+      localStorage.setItem('capres-logo', result);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  clearCapresLogo() {
+    this.capresLogoDataUrl = null;
+    localStorage.removeItem('capres-logo');
+  }
+
+  splitPhones(value: string): string[] {
+    if (!value) return [];
+    return value
+      .split('/')
+      .map(v => v.trim())
+      .filter(v => v.length > 0);
   }
 
   printInvoice() {
