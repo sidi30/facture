@@ -284,7 +284,7 @@
       <div class="card">
         <h2>👁️ Aperçu</h2>
         <ng-container [ngSwitch]="templateMode()">
-          <div *ngSwitchCase="'standard'" id="invoice" class="invoice standard-invoice">
+          <div *ngSwitchCase="'standard'" id="invoice-standard" class="invoice standard-invoice">
             <!-- En-tête -->
             <div class="invoice-header">
               <div class="invoice-title">
@@ -374,7 +374,7 @@
             </div>
           </div>
 
-          <div *ngSwitchCase="'capres'" id="invoice" class="capres-page">
+          <div *ngSwitchCase="'capres'" id="invoice-capres" class="capres-page">
             <div class="capres-header-row">
               <div class="capres-left">
                 <div class="capres-logo">

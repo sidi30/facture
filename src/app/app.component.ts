@@ -17,7 +17,7 @@ export class AppComponent {
   // Defaults for September (current year) and 7 days worked, TJM 465€
   now = new Date();
   currentYear = this.now.getFullYear();
-  templateMode = signal<'standard' | 'capres'>('standard');
+  templateMode = signal<'standard' | 'capres'>('capres');
   capresLogoDataUrl: string | null = null;
   readonly defaultCapresLogoPath = 'assets/logo-capresco.png';
   
@@ -349,16 +349,34 @@ export class AppComponent {
   }
 
   async exportPDF() {
-    const target = document.getElementById('invoice');
-    if (!target) return;
+    // Sélectionner le bon élément selon le mode actuel
+    const elementId = this.templateMode() === 'standard' ? 'invoice-standard' : 'invoice-capres';
+    const target = document.getElementById(elementId);
+    
+    if (!target) {
+      console.error(`Élément de facture introuvable: ${elementId}`);
+      alert('Impossible de générer le PDF. Élément introuvable.');
+      return;
+    }
+    
+    // Vérifier que l'élément est visible (pas caché par ngSwitch)
+    const isVisible = target.offsetParent !== null;
+    if (!isVisible) {
+      console.error('L\'élément de facture n\'est pas visible');
+      alert('Impossible de générer le PDF. L\'élément n\'est pas visible.');
+      return;
+    }
     
     try {
+      // Configuration améliorée pour une meilleure qualité et gestion des images
       const canvas = await html2canvas(target, { 
-        scale: 2, 
+        scale: 3, // Meilleure qualité
         backgroundColor: '#ffffff',
         useCORS: true,
         allowTaint: true,
-        logging: false
+        logging: false,
+        imageTimeout: 0,
+        removeContainer: true
       });
       
       const imgData = canvas.toDataURL('image/png', 1.0);
