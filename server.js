@@ -2,17 +2,42 @@
 const express = require('express');
 const path = require('path');
 const open = require('open');
+const fs = require('fs');
 
 const app = express();
 const PORT = 3500;
 
+// Déterminer le bon chemin pour les fichiers statiques
+// Si on est dans un exe pkg, les assets sont à côté de l'exe
+let distPath;
+if (process.pkg) {
+  // Mode exécutable pkg
+  distPath = path.join(path.dirname(process.execPath), 'dist');
+} else {
+  // Mode développement
+  distPath = path.join(__dirname, 'dist');
+}
+
+console.log(`📁 Chemin dist: ${distPath}`);
+
+// Vérifier que le dossier existe
+if (!fs.existsSync(distPath)) {
+  console.error(`❌ ERREUR: Le dossier dist n'existe pas: ${distPath}`);
+  console.error(`   Veuillez vous assurer que le build a été fait avant de créer l'exe.`);
+  process.exit(1);
+}
+
 // Servir les fichiers statiques depuis le dossier dist
-const distPath = path.join(__dirname, 'dist');
 app.use(express.static(distPath));
 
 // Fallback pour Angular routing (SPA)
 app.get('*', (req, res) => {
-  res.sendFile(path.join(distPath, 'index.html'));
+  const indexPath = path.join(distPath, 'index.html');
+  if (!fs.existsSync(indexPath)) {
+    console.error(`❌ ERREUR: index.html introuvable: ${indexPath}`);
+    return res.status(500).send('Fichiers de l\'application introuvables');
+  }
+  res.sendFile(indexPath);
 });
 
 // Démarrer le serveur

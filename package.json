@@ -8,7 +8,7 @@
     "build:gh": "ng build --configuration gh-pages",
     "build:standalone": "ng build --configuration production && node create-standalone-dist.js",
     "start:server": "node server.js",
-    "package": "npm run build:standalone && pkg server.js --targets node18-win-x64 --output facture-app.exe",
+    "package": "npm run build:standalone && pkg server.js --targets node18-win-x64 --output facture-app.exe && node create-release.js",
     "test": "ng test",
     "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
     "lint": "ng lint",

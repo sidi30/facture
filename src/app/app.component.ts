@@ -19,7 +19,7 @@ export class AppComponent {
   currentYear = this.now.getFullYear();
   templateMode = signal<'standard' | 'capres'>('standard');
   capresLogoDataUrl: string | null = null;
-  readonly defaultCapresLogoPath = 'assets/logo capresco.png';
+  readonly defaultCapresLogoPath = 'assets/logo-capresco.png';
   
   private getBusinessDaysInMonth(year: number, monthIndex: number): number {
     // monthIndex: 0-11

@@ -21,7 +21,15 @@ Cela va :
 
 ## 📦 Utilisation de l'exécutable
 
-1. Double-cliquez sur `facture-app.exe`
+⚠️ **IMPORTANT** : Le fichier `facture-app.exe` et le dossier `dist/` doivent rester ensemble !
+
+Le dossier `/release` contient tout ce qu'il faut :
+- `facture-app.exe` : l'exécutable
+- `dist/` : les fichiers de l'application
+- `LISEZMOI.txt` : instructions utilisateur
+
+**Pour utiliser :**
+1. Double-cliquez sur `facture-app.exe` (dans le dossier /release)
 2. Un serveur local démarre automatiquement
 3. Votre navigateur s'ouvre sur `http://localhost:3500`
 4. L'application fonctionne complètement offline !
@@ -87,11 +95,17 @@ npm run start:server
 
 ## 📦 Distribution
 
-L'exécutable `facture-app.exe` peut être :
-- Copié sur clé USB
-- Envoyé par email (si < 25 Mo, sinon WeTransfer)
-- Partagé sur réseau local
-- Exécuté depuis n'importe quel dossier
+**Le dossier `/release` complet doit être distribué**, pas seulement l'exe !
+
+Méthodes de distribution :
+- **Clé USB** : Copier tout le dossier `/release`
+- **Email/WeTransfer** : Zipper le dossier `/release` complet
+- **Réseau local** : Partager le dossier `/release`
+
+⚠️ **IMPORTANT** : 
+- Ne jamais séparer `facture-app.exe` du dossier `dist/`
+- Toujours distribuer le dossier complet (ou un zip du dossier)
+- Taille totale : ~42 Mo (exe + assets)
 
 **Aucune installation n'est nécessaire !**
 

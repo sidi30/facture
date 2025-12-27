@@ -2,6 +2,16 @@
   GÉNÉRATEUR DE FACTURES - Application Portable
 ═══════════════════════════════════════════════════════════════
 
+⚠️ IMPORTANT : NE PAS SÉPARER LES FICHIERS
+--------------------------------------------
+
+Ce dossier contient :
+• facture-app.exe (l'exécutable)
+• dist/ (dossier requis - NE PAS SUPPRIMER)
+• LISEZMOI.txt (ce fichier)
+
+L'exe et le dossier dist/ doivent TOUJOURS rester ensemble !
+
 📦 UTILISATION
 --------------
 
